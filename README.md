@@ -192,3 +192,4 @@ Este proyecto es de código abierto para fines educativos.
 ## Autor
 
 Sistema de Gestión Universitaria - 2025
+# Proyecto desplegado en Railway
