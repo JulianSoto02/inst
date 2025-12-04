@@ -17,7 +17,7 @@ Uso en el sistema:
 
 from abc import ABC, abstractmethod
 from typing import List, Dict
-from app.models.notificacion import Notificacion, TipoNotificacion
+from application.models.notificacion import Notificacion, TipoNotificacion
 
 
 class Observer(ABC):
@@ -236,7 +236,7 @@ class PreferenciaSubject(Subject):
 # Ejemplo de uso:
 """
 # Crear repositorio de notificaciones
-from app.repositories.notificacion_repository import NotificacionRepository
+from application.repositories.notificacion_repository import NotificacionRepository
 notif_repo = NotificacionRepository()
 
 # Crear observers

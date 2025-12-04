@@ -7,14 +7,14 @@ from functools import wraps
 
 sys.path.insert(0, os.path.dirname(__file__))
 
-from app.patterns.singleton import DatabaseConnection, SessionManager
-from app.repositories.usuario_repository import UsuarioRepository
-from app.repositories.materia_repository import MateriaRepository, HorarioRepository
-from app.repositories.preferencia_repository import PreferenciaRepository
-from app.repositories.notificacion_repository import NotificacionRepository
-from app.services.auth_service import AuthService
-from app.services.docente_service import DocenteService
-from app.services.administrativo_service import AdministrativoService
+from application.patterns.singleton import DatabaseConnection, SessionManager
+from application.repositories.usuario_repository import UsuarioRepository
+from application.repositories.materia_repository import MateriaRepository, HorarioRepository
+from application.repositories.preferencia_repository import PreferenciaRepository
+from application.repositories.notificacion_repository import NotificacionRepository
+from application.services.auth_service import AuthService
+from application.services.docente_service import DocenteService
+from application.services.administrativo_service import AdministrativoService
 
 try:
     os.makedirs('logs', exist_ok=True)
@@ -34,9 +34,9 @@ except:
     )
 logger = logging.getLogger(__name__)
 
-template_dir = os.path.join(os.path.dirname(__file__), 'app', 'templates')
-static_dir = os.path.join(os.path.dirname(__file__), 'app', 'static')
-app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
+template_dir = os.path.join(os.path.dirname(__file__), 'application', 'templates')
+static_dir = os.path.join(os.path.dirname(__file__), 'application', 'static')
+app = Flask(__name__, template_folder='application/templates', static_folder='application/static')
 
 app.secret_key = os.environ.get('SECRET_KEY', 'clave-secreta-super-segura-12345')
 app.config['DATABASE'] = os.environ.get('DATABASE_PATH', 'database/universidad.db')

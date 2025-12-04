@@ -5,9 +5,9 @@ Aplica principios SOLID (SRP, DIP, ISP).
 """
 
 from typing import List, Optional
-from app.patterns.repository import BaseRepository
-from app.patterns.factory import UsuarioFactory
-from app.models.user import Usuario, Docente, Administrativo
+from application.patterns.repository import BaseRepository
+from application.patterns.factory import UsuarioFactory
+from application.models.user import Usuario, Docente, Administrativo
 import hashlib
 
 

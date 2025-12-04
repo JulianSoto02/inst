@@ -5,13 +5,13 @@ Aplica principios SOLID.
 """
 
 from typing import List, Dict, Optional
-from app.repositories.usuario_repository import UsuarioRepository
-from app.repositories.materia_repository import MateriaRepository, HorarioRepository
-from app.repositories.preferencia_repository import PreferenciaRepository
-from app.repositories.notificacion_repository import NotificacionRepository
-from app.models.user import Docente
-from app.models.materia import Materia
-from app.models.preferencia import PreferenciaEnsenanza, EstadoPreferencia
+from application.repositories.usuario_repository import UsuarioRepository
+from application.repositories.materia_repository import MateriaRepository, HorarioRepository
+from application.repositories.preferencia_repository import PreferenciaRepository
+from application.repositories.notificacion_repository import NotificacionRepository
+from application.models.user import Docente
+from application.models.materia import Materia
+from application.models.preferencia import PreferenciaEnsenanza, EstadoPreferencia
 
 
 class DocenteService:

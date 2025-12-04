@@ -4,8 +4,8 @@ Implementa patrón Repository para materias y horarios.
 """
 
 from typing import List, Optional
-from app.patterns.repository import BaseRepository
-from app.models.materia import Materia, HorarioClase
+from application.patterns.repository import BaseRepository
+from application.models.materia import Materia, HorarioClase
 
 
 class MateriaRepository(BaseRepository[Materia]):

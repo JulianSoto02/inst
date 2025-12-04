@@ -9,9 +9,9 @@ Principios SOLID aplicados:
 """
 
 from typing import Optional, Dict
-from app.repositories.usuario_repository import UsuarioRepository
-from app.patterns.singleton import SessionManager
-from app.models.user import Usuario
+from application.repositories.usuario_repository import UsuarioRepository
+from application.patterns.singleton import SessionManager
+from application.models.user import Usuario
 
 
 class AuthService:

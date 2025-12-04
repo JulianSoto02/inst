@@ -4,8 +4,8 @@ Gestiona las notificaciones del sistema.
 """
 
 from typing import List, Optional
-from app.patterns.repository import BaseRepository
-from app.models.notificacion import Notificacion, TipoNotificacion
+from application.patterns.repository import BaseRepository
+from application.models.notificacion import Notificacion, TipoNotificacion
 from datetime import datetime
 
 

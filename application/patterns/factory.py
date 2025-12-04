@@ -14,7 +14,7 @@ Uso en el sistema:
 """
 
 from typing import Optional, Dict
-from app.models.user import Usuario, Docente, Administrativo
+from application.models.user import Usuario, Docente, Administrativo
 
 
 class UsuarioFactory:

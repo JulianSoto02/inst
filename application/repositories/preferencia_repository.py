@@ -4,8 +4,8 @@ Gestiona las preferencias de enseñanza de los docentes.
 """
 
 from typing import List, Optional
-from app.patterns.repository import BaseRepository
-from app.models.preferencia import PreferenciaEnsenanza, EstadoPreferencia
+from application.patterns.repository import BaseRepository
+from application.models.preferencia import PreferenciaEnsenanza, EstadoPreferencia
 
 
 class PreferenciaRepository(BaseRepository[PreferenciaEnsenanza]):

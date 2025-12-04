@@ -5,12 +5,12 @@ Aplica principios SOLID.
 """
 
 from typing import List, Dict, Optional
-from app.repositories.usuario_repository import UsuarioRepository
-from app.repositories.materia_repository import MateriaRepository
-from app.repositories.preferencia_repository import PreferenciaRepository
-from app.patterns.observer import AsignacionSubject, PreferenciaSubject, NotificacionObserver
-from app.repositories.notificacion_repository import NotificacionRepository
-from app.models.user import Docente
+from application.repositories.usuario_repository import UsuarioRepository
+from application.repositories.materia_repository import MateriaRepository
+from application.repositories.preferencia_repository import PreferenciaRepository
+from application.patterns.observer import AsignacionSubject, PreferenciaSubject, NotificacionObserver
+from application.repositories.notificacion_repository import NotificacionRepository
+from application.models.user import Docente
 
 
 class AdministrativoService:
@@ -100,7 +100,7 @@ class AdministrativoService:
 
     def obtener_preferencias_pendientes(self) -> List[Dict]:
         """Obtiene preferencias pendientes de aprobación"""
-        from app.models.preferencia import EstadoPreferencia
+        from application.models.preferencia import EstadoPreferencia
         preferencias = self._preferencia_repo.obtener_por_estado(EstadoPreferencia.PENDIENTE)
         resultado = []
 
@@ -162,7 +162,7 @@ class AdministrativoService:
 
     def crear_docente(self, datos: Dict) -> tuple[bool, str]:
         """Crea un nuevo docente en el sistema"""
-        from app.patterns.factory import UsuarioFactory
+        from application.patterns.factory import UsuarioFactory
 
         try:
             docente = UsuarioFactory.crear_usuario('docente', datos)
