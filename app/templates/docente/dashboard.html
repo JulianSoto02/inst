@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Docente - Universidad</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-blue: #2C5F7C;
+            --secondary-blue: #5B9BD5;
+            --accent-orange: #ED7D31;
+            --dark-navy: #1A3A52;
+            --light-gray: #F8F9FA;
+            --medium-gray: #E9ECEF;
+            --text-dark: #212529;
+            --text-gray: #6C757D;
+            --success: #28A745;
+            --warning: #FFC107;
+            --danger: #DC3545;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: var(--light-gray);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        /* Topbar */
+        .topbar {
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-navy) 100%);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .topbar-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-section img {
+            height: 50px;
+        }
+
+        .logo-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .user-info-top {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .user-avatar-top {
+            width: 42px;
+            height: 42px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .user-details {
+            text-align: left;
+        }
+
+        .user-name-top {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .user-role-top {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        /* Main Layout */
+        .main-wrapper {
+            display: flex;
+            max-width: 1600px;
+            margin: 0 auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: white;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            padding: 2rem 0;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 0.3rem;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem 2rem;
+            color: var(--text-gray);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border-left: 4px solid transparent;
+            position: relative;
+        }
+
+        .sidebar-nav a:hover {
+            background: var(--light-gray);
+            color: var(--primary-blue);
+        }
+
+        .sidebar-nav a.active {
+            background: linear-gradient(90deg, rgba(91, 155, 213, 0.1) 0%, transparent 100%);
+            color: var(--primary-blue);
+            border-left-color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .sidebar-nav a i {
+            width: 20px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-nav .logout-link {
+            color: var(--danger);
+        }
+
+        .sidebar-nav .logout-link:hover {
+            background: rgba(220, 53, 69, 0.05);
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2.5rem 3rem;
+            overflow-y: auto;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border-left: 5px solid var(--secondary-blue);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .page-header p {
+            color: var(--text-gray);
+            font-size: 1.05rem;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon-wrapper {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon-wrapper.blue {
+            background: linear-gradient(135deg, #5B9BD5 0%, #4A8BC4 100%);
+            color: white;
+        }
+
+        .stat-icon-wrapper.green {
+            background: linear-gradient(135deg, #28A745 0%, #218838 100%);
+            color: white;
+        }
+
+        .stat-icon-wrapper.purple {
+            background: linear-gradient(135deg, #6F42C1 0%, #5A32A3 100%);
+            color: white;
+        }
+
+        .stat-icon-wrapper.orange {
+            background: linear-gradient(135deg, #ED7D31 0%, #D86B29 100%);
+            color: white;
+        }
+
+        .stat-content h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            line-height: 1;
+        }
+
+        /* Content Card */
+        .content-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            border: 1px solid var(--medium-gray);
+        }
+
+        .card-header-section {
+            padding: 1.8rem 2rem;
+            border-bottom: 1px solid var(--medium-gray);
+            background: linear-gradient(to bottom, white, var(--light-gray));
+        }
+
+        .card-title-main {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 0.3rem;
+        }
+
+        .card-subtitle-main {
+            color: var(--text-gray);
+            font-size: 0.95rem;
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light-gray);
+        }
+
+        th {
+            padding: 1.2rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--medium-gray);
+        }
+
+        td {
+            padding: 1.2rem 1.5rem;
+            border-bottom: 1px solid var(--medium-gray);
+            color: var(--text-dark);
+        }
+
+        tbody tr {
+            transition: background 0.2s;
+        }
+
+        tbody tr:hover {
+            background: var(--light-gray);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        td strong {
+            color: var(--primary-blue);
+            font-weight: 600;
+        }
+
+        .day-badge {
+            display: inline-block;
+            padding: 0.4rem 0.9rem;
+            background: var(--secondary-blue);
+            color: white;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #D4EDDA;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #F8D7DA;
+            border-color: var(--danger);
+            color: #721C24;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                padding: 1rem 0;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .sidebar-nav li {
+                flex: 1;
+                min-width: 150px;
+            }
+
+            .main-content {
+                padding: 2rem 1.5rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .topbar-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Topbar -->
+    <div class="topbar">
+        <div class="topbar-content">
+            <div class="logo-section">
+                <img src="https://i.postimg.cc/Y9MdN8Xz/universidad-logo.png" alt="Universidad">
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info-top">
+                    <div class="user-avatar-top">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-details">
+                        <div class="user-name-top">{{ usuario.nombre_completo.split()[1] }} {{ usuario.nombre_completo.split()[2] if usuario.nombre_completo.split()|length > 2 else '' }}</div>
+                        <div class="user-role-top">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <ul class="sidebar-nav">
+                <li>
+                    <a href="{{ url_for('docente_dashboard') }}" class="active">
+                        <i class="fas fa-home"></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docente_perfil') }}">
+                        <i class="fas fa-user"></i>
+                        <span>Perfil</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docente_notificaciones') }}">
+                        <i class="fas fa-bell"></i>
+                        <span>Notificaciones</span>
+                        {% if notificaciones_count > 0 %}
+                        <span class="nav-badge">{{ notificaciones_count }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docente_calendario') }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Calendario</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docente_asignaturas') }}">
+                        <i class="fas fa-book"></i>
+                        <span>Asignaturas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('docente_preferencias') }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Preferencias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('logout') }}" class="logout-link">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>Bienvenido, Dr. {{ usuario.nombre_completo.split()[1] }}</h1>
+                <p>Panel de control académico - Resumen de tu actividad</p>
+            </div>
+
+            <!-- Alerts -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper blue">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Materias Asignadas</h3>
+                        <div class="stat-number">{{ resumen.materias_asignadas }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper green">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Horas Semanales</h3>
+                        <div class="stat-number">{{ resumen.horas_semanales }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper purple">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Próximas Clases</h3>
+                        <div class="stat-number">{{ resumen.proximas_clases }}</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon-wrapper orange">
+                        <i class="fas fa-list-check"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Preferencias Pendientes</h3>
+                        <div class="stat-number">{{ resumen.preferencias_pendientes }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Classes Table -->
+            <div class="content-card">
+                <div class="card-header-section">
+                    <h2 class="card-title-main">Próximas Clases</h2>
+                    <p class="card-subtitle-main">Clases programadas para esta semana</p>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Materia</th>
+                                <th>Aula</th>
+                                <th>Día</th>
+                                <th>Horario</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for clase in resumen.lista_proximas_clases %}
+                            <tr>
+                                <td><strong>{{ clase.materia }}</strong></td>
+                                <td>{{ clase.aula }}</td>
+                                <td><span class="day-badge">{{ clase.dia }}</span></td>
+                                <td>{{ clase.horario }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

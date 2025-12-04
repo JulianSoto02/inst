@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario - Docente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('docente_calendario') }}" class="active"><i class="fas fa-calendar"></i> Calendario</a></li>
+            <li><a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book"></i> Asignaturas</a></li>
+            <li><a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-cog"></i> Preferencias</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('docente_notificaciones') }}"><i class="fas fa-bell icon"></i> Notificaciones {% if notificaciones_count > 0 %}<span class="badge badge-danger" style="margin-left: auto;">{{ notificaciones_count }}</span>{% endif %}</a>
+                    <a href="{{ url_for('docente_calendario') }}" class="active"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book icon"></i> Asignaturas</a>
+                    <a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-sliders-h icon"></i> Preferencias</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Calendario Semanal</h1>
+                    <p style="opacity: 0.9;">Visualiza tu horario de clases de la semana</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="card-title">Semana del 27 de Noviembre - 3 de Diciembre</h2>
+                            <p class="card-subtitle">Horarios de clases programadas</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-outline btn-sm"><i class="fas fa-chevron-left"></i> Anterior</button>
+                            <button class="btn btn-outline btn-sm">Hoy</button>
+                            <button class="btn btn-outline btn-sm">Siguiente <i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="schedule-grid">
+                        <div class="schedule-header" style="grid-column: 1;"></div>
+                        <div class="schedule-header">Lunes</div>
+                        <div class="schedule-header">Martes</div>
+                        <div class="schedule-header">Miércoles</div>
+                        <div class="schedule-header">Jueves</div>
+                        <div class="schedule-header">Viernes</div>
+                        <div class="schedule-header">Sábado</div>
+
+                        <div class="schedule-time">08:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">09:00</div>
+                        <div class="schedule-cell">
+                            <div class="class-block">
+                                <strong>Cálculo I</strong>
+                                <small>Aula A-101</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #70AD47;">
+                                <strong>Álgebra</strong>
+                                <small>Aula B-202</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #ED7D31;">
+                                <strong>Cálculo I</strong>
+                                <small>Aula A-101</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #9B59B6;">
+                                <strong>Álgebra</strong>
+                                <small>Aula B-202</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">10:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #3498DB;">
+                                <strong>Cálculo I</strong>
+                                <small>Aula A-101</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">11:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #E67E22;">
+                                <strong>Laboratorio</strong>
+                                <small>Lab-01</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">12:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">13:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">14:00</div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #16A085;">
+                                <strong>Cálculo II</strong>
+                                <small>Aula C-303</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #8E44AD;">
+                                <strong>Cálculo II</strong>
+                                <small>Aula C-303</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell">
+                            <div class="class-block" style="background-color: #C0392B;">
+                                <strong>Cálculo II</strong>
+                                <small>Aula C-303</small>
+                            </div>
+                        </div>
+                        <div class="schedule-cell"></div>
+
+                        <div class="schedule-time">15:00</div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                        <div class="schedule-cell"></div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Próximas Clases</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Materia</th>
+                                        <th>Horario</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Cálculo I</strong></td>
+                                        <td>Hoy, 09:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Álgebra</strong></td>
+                                        <td>Martes, 09:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Laboratorio</strong></td>
+                                        <td>Martes, 11:00</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Cálculo II</strong></td>
+                                        <td>Miércoles, 14:00</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Resumen Semanal</h3>
+                        </div>
+                        <div style="padding: 0 1.5rem;">
+                            <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <span>Total de horas esta semana</span>
+                                <strong>12 horas</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <span>Clases programadas</span>
+                                <strong>9 clases</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <span>Horas de tutoría</span>
+                                <strong>2 horas</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 1rem 0;">
+                                <span>Laboratorios</span>
+                                <strong>1 sesión</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

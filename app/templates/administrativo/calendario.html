@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Administrativo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user"></i> Docentes</a></li>
+            <li><a href="{{ url_for('admin_asignaciones') }}"><i class="fas fa-layer-group"></i> Asignaciones</a></li>
+            <li><a href="{{ url_for('admin_calendario') }}" class="active"><i class="fas fa-calendar"></i> Calendario</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user icon"></i> Gestión Docentes</a>
+                    <a href="{{ url_for('admin_asignaciones') }}"><i class="fas fa-layer-group icon"></i> Asignaciones</a>
+                    <a href="{{ url_for('admin_calendario') }}" class="active"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Calendario Administrativo</h1>
+                    <p style="opacity: 0.9;">Visualiza y gestiona eventos académicos importantes</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="card-title">Calendario Académico 2024-II</h2>
+                            <p class="card-subtitle">Fechas importantes y eventos</p>
+                        </div>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Evento</button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; padding: 1.5rem 0;">
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--bg-dark-blue);">Diciembre 2024</h3>
+                            <div style="border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0; background-color: var(--bg-light-blue);">
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Dom</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Lun</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Mar</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Mié</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Jue</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Vie</div>
+                                    <div style="padding: 0.5rem; text-align: center; font-weight: bold; color: #333;">Sab</div>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 0;">
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee; background-color: #f8f9fa; color: #999;">1</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">2</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">3</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">4</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee; background-color: #e8f5e9;">5</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">6</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">7</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">8</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">9</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">10</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">11</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">12</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">13</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">14</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">15</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee; background-color: #fff3cd;">16</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">17</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">18</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">19</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">20</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">21</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">22</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">23</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">24</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">25</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">26</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">27</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">28</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">29</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">30</div>
+                                    <div style="padding: 0.7rem; text-align: center; border: 1px solid #eee;">31</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 style="margin-bottom: 1rem; color: var(--bg-dark-blue);">Eventos Próximos</h3>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="padding: 1rem; border-left: 4px solid var(--color-danger); background-color: #fff8f8; border-radius: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                        <div>
+                                            <strong>Cierre de Registro de Asignaturas</strong>
+                                            <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Última fecha para confirmar asignaciones</p>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="badge badge-danger">Urgente</span>
+                                            <small style="display: block; color: #999; margin-top: 0.3rem;">15 dic</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 1rem; border-left: 4px solid var(--color-warning); background-color: #fffbf0; border-radius: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                        <div>
+                                            <strong>Revisión de Horarios</strong>
+                                            <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Revisión final de conflictos</p>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="badge badge-warning">Pendiente</span>
+                                            <small style="display: block; color: #999; margin-top: 0.3rem;">18 dic</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 1rem; border-left: 4px solid var(--color-success); background-color: #f0fff4; border-radius: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                        <div>
+                                            <strong>Inicio de Receso Académico</strong>
+                                            <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Período de descanso académico</p>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="badge badge-success">Programado</span>
+                                            <small style="display: block; color: #999; margin-top: 0.3rem;">22 dic</small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="padding: 1rem; border-left: 4px solid var(--color-info); background-color: #f0f8ff; border-radius: 4px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                        <div>
+                                            <strong>Inicio del Nuevo Semestre</strong>
+                                            <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Início de 2024-III</p>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <span class="badge badge-info">Programado</span>
+                                            <small style="display: block; color: #999; margin-top: 0.3rem;">2 ene</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Fechas Clave del Semestre</h3>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Evento</th>
+                                    <th>Fecha</th>
+                                    <th>Descripción</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Inicio de Clases</strong></td>
+                                    <td>4 de septiembre</td>
+                                    <td>Primera semana de clases</td>
+                                    <td><span class="badge badge-success">Completado</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Primer Parcial</strong></td>
+                                    <td>28 de octubre</td>
+                                    <td>Exámenes del primer parcial</td>
+                                    <td><span class="badge badge-success">Completado</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Segundo Parcial</strong></td>
+                                    <td>25 de noviembre</td>
+                                    <td>Exámenes del segundo parcial</td>
+                                    <td><span class="badge badge-success">Completado</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Final de Semestre</strong></td>
+                                    <td>13 de diciembre</td>
+                                    <td>Último día de clases</td>
+                                    <td><span class="badge badge-warning">En Progreso</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Período de Exámenes Finales</strong></td>
+                                    <td>16-20 de diciembre</td>
+                                    <td>Exámenes finales</td>
+                                    <td><span class="badge badge-info">Próximo</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

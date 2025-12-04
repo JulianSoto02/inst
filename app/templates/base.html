@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema Universitario{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/modern.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+    {% if not hide_navbar %}
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="{{ url_for('index') }}" class="nav-brand">
+                <i class="fas fa-graduation-cap"></i>
+                UNIVERSIDAD
+            </a>
+            <ul class="nav-menu">
+                {% if session.get('usuario_id') %}
+                {% if session.get('rol') == 'docente' %}
+                <li class="nav-item"><a href="{{ url_for('docente_dashboard') }}"
+                        class="{{ 'active' if request.endpoint == 'docente_dashboard' else '' }}">Dashboard</a></li>
+                <li class="nav-item"><a href="{{ url_for('docente_calendario') }}"
+                        class="{{ 'active' if request.endpoint == 'docente_calendario' else '' }}">Calendario</a></li>
+                <li class="nav-item"><a href="{{ url_for('docente_asignaturas') }}"
+                        class="{{ 'active' if request.endpoint == 'docente_asignaturas' else '' }}">Asignaturas</a></li>
+                <li class="nav-item"><a href="{{ url_for('docente_perfil') }}"
+                        class="{{ 'active' if request.endpoint == 'docente_perfil' else '' }}">Perfil</a></li>
+                {% else %}
+                <li class="nav-item"><a href="{{ url_for('admin_dashboard') }}"
+                        class="{{ 'active' if request.endpoint == 'admin_dashboard' else '' }}">Dashboard</a></li>
+                <li class="nav-item"><a href="{{ url_for('admin_docentes') }}"
+                        class="{{ 'active' if request.endpoint == 'admin_docentes' else '' }}">Docentes</a></li>
+                <li class="nav-item"><a href="{{ url_for('admin_asignaciones') }}"
+                        class="{{ 'active' if request.endpoint == 'admin_asignaciones' else '' }}">Asignaciones</a></li>
+                <li class="nav-item"><a href="{{ url_for('admin_perfil') }}"
+                        class="{{ 'active' if request.endpoint == 'admin_perfil' else '' }}">Perfil</a></li>
+                {% endif %}
+                <li class="nav-item"><a href="{{ url_for('logout') }}" class="text-danger"><i
+                            class="fas fa-sign-out-alt"></i> Salir</a></li>
+                {% else %}
+                <li class="nav-item"><a href="{{ url_for('login_docente') }}"
+                        class="{{ 'active' if request.endpoint == 'login_docente' else '' }}">Docentes</a></li>
+                <li class="nav-item"><a href="{{ url_for('login_administrativo') }}"
+                        class="{{ 'active' if request.endpoint == 'login_administrativo' else '' }}">Administrativos</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

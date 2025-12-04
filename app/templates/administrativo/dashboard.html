@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Administrativo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user"></i> Docentes</a></li>
+            <li><a href="{{ url_for('admin_asignaciones') }}"><i class="fas fa-layer-group"></i> Asignaciones</a></li>
+            <li><a href="{{ url_for('admin_calendario') }}"><i class="fas fa-calendar"></i> Calendario</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('admin_dashboard') }}" class="active"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user icon"></i> Gestión Docentes</a>
+                    <a href="{{ url_for('admin_asignaciones') }}"><i class="fas fa-layer-group icon"></i> Asignaciones</a>
+                    <a href="{{ url_for('admin_calendario') }}"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Panel Administrativo</h1>
+                    <p style="opacity: 0.9;">Información general de la gestión académica y docentes</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-chalkboard-user"></i></div>
+                        <div class="stat-info">
+                            <h3>Docentes Activos</h3>
+                            <div class="stat-number">42</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-book"></i></div>
+                        <div class="stat-info">
+                            <h3>Asignaturas</h3>
+                            <div class="stat-number">86</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-person-chalkboard"></i></div>
+                        <div class="stat-info">
+                            <h3>Estudiantes</h3>
+                            <div class="stat-number">1,247</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-calendar-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Clases Programadas</h3>
+                            <div class="stat-number">342</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Asignaciones Pendientes</h2>
+                            <p class="card-subtitle">Docentes sin asignatura asignada</p>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Docente</th>
+                                        <th>Departamento</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Dr. Carlos Mendez</strong></td>
+                                        <td>Ciencias Exactas</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Ing. Maria Lopez</strong></td>
+                                        <td>Ingeniería</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Lic. Juan Rodriguez</strong></td>
+                                        <td>Humanidades</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Estado del Sistema</h3>
+                        </div>
+                        <div style="padding: 0 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <div style="width: 10px; height: 10px; background-color: var(--color-success); border-radius: 50%;"></div>
+                                <span>Base de Datos</span>
+                                <strong style="margin-left: auto; color: var(--color-success);">Online</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <div style="width: 10px; height: 10px; background-color: var(--color-success); border-radius: 50%;"></div>
+                                <span>Servidor</span>
+                                <strong style="margin-left: auto; color: var(--color-success);">Funcionando</strong>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem 0;">
+                                <div style="width: 10px; height: 10px; background-color: var(--color-warning); border-radius: 50%;"></div>
+                                <span>Memoria</span>
+                                <strong style="margin-left: auto; color: var(--color-warning);">78%</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Actividad Reciente</h2>
+                        <p class="card-subtitle">Últimas acciones en el sistema</p>
+                    </div>
+                    <div style="border-top: 1px solid #eee; padding-top: 1rem;">
+                        <div style="padding: 1rem 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Nueva asignatura creada</strong>
+                                <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Se creó 'Inteligencia Artificial Aplicada' en el departamento de Ingeniería</p>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #999;">Hace 2 horas</div>
+                        </div>
+                        <div style="padding: 1rem 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Docente agregado</strong>
+                                <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Dr. Fernando García se agregó al departamento de Ciencias</p>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #999;">Hace 5 horas</div>
+                        </div>
+                        <div style="padding: 1rem 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Horario modificado</strong>
+                                <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Se actualizó el horario de 15 clases en el edificio A</p>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #999;">Hace 1 día</div>
+                        </div>
+                        <div style="padding: 1rem 0; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Preferencias procesadas</strong>
+                                <p style="margin: 0.3rem 0 0 0; color: #666; font-size: 0.9rem;">Se procesaron las preferencias de 38 docentes</p>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #999;">Hace 2 días</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Próximas Acciones</h3>
+                        </div>
+                        <div style="padding: 0 1.5rem;">
+                            <div style="padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <span class="badge badge-warning">Pendiente</span>
+                                <strong style="display: block; margin-top: 0.3rem;">Cierre de registro de asignaturas</strong>
+                                <small style="color: #666;">15 de diciembre</small>
+                            </div>
+                            <div style="padding: 1rem 0; border-bottom: 1px solid #eee;">
+                                <span class="badge badge-danger">Urgente</span>
+                                <strong style="display: block; margin-top: 0.3rem;">Revisión de conflictos de horario</strong>
+                                <small style="color: #666;">Antes del 10 de diciembre</small>
+                            </div>
+                            <div style="padding: 1rem 0;">
+                                <span class="badge badge-info">Información</span>
+                                <strong style="display: block; margin-top: 0.3rem;">Inicio del nuevo semestre</strong>
+                                <small style="color: #666;">2 de enero 2025</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Reportes</h3>
+                        </div>
+                        <div style="padding: 0 1.5rem; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <button class="btn btn-outline" style="width: 100%; justify-content: flex-start; gap: 0.5rem;">
+                                <i class="fas fa-file-pdf"></i> Informe de Docentes
+                            </button>
+                            <button class="btn btn-outline" style="width: 100%; justify-content: flex-start; gap: 0.5rem;">
+                                <i class="fas fa-file-excel"></i> Estadísticas de Asignaciones
+                            </button>
+                            <button class="btn btn-outline" style="width: 100%; justify-content: flex-start; gap: 0.5rem;">
+                                <i class="fas fa-file-pdf"></i> Reporte de Conflictos
+                            </button>
+                            <button class="btn btn-outline" style="width: 100%; justify-content: flex-start; gap: 0.5rem;">
+                                <i class="fas fa-chart-bar"></i> Análisis General
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

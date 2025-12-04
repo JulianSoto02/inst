@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificaciones - Docente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar"></i> Calendario</a></li>
+            <li><a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book"></i> Asignaturas</a></li>
+            <li><a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-cog"></i> Preferencias</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('docente_notificaciones') }}" class="active"><i class="fas fa-bell icon"></i> Notificaciones {% if notificaciones_count > 0 %}<span class="badge badge-danger" style="margin-left: auto;">{{ notificaciones_count }}</span>{% endif %}</a>
+                    <a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book icon"></i> Asignaturas</a>
+                    <a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-sliders-h icon"></i> Preferencias</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Notificaciones</h1>
+                    <p style="opacity: 0.9;">Aquí puedes ver todos tus mensajes y notificaciones</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-envelope"></i></div>
+                        <div class="stat-info">
+                            <h3>No Leídas</h3>
+                            <div class="stat-number">5</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check"></i></div>
+                        <div class="stat-info">
+                            <h3>Leídas</h3>
+                            <div class="stat-number">28</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-exclamation"></i></div>
+                        <div class="stat-info">
+                            <h3>Urgentes</h3>
+                            <div class="stat-number">2</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-trash"></i></div>
+                        <div class="stat-info">
+                            <h3>Archivadas</h3>
+                            <div class="stat-number">12</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="card-title">Centro de Notificaciones</h2>
+                            <p class="card-subtitle">Últimas notificaciones recibidas</p>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <button class="btn btn-outline btn-sm"><i class="fas fa-filter"></i> Filtrar</button>
+                            <button class="btn btn-outline btn-sm"><i class="fas fa-sort"></i> Ordenar</button>
+                        </div>
+                    </div>
+
+                    <div style="border-top: 1px solid #eee; padding-top: 1rem;">
+                        <!-- Notificación sin leer -->
+                        <div style="padding: 1.5rem; border-left: 4px solid var(--color-danger); background-color: #fff8f8; margin-bottom: 1rem; border-radius: 4px; cursor: pointer;" onclick="this.style.backgroundColor='white'; this.style.borderLeftColor='#ddd';">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <span class="badge badge-danger">Urgente</span>
+                                        <strong>Cambio de Horario en Cálculo I</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Se ha reprogramado la clase de Cálculo I del próximo jueves de 9:00 a 10:30 en el aula A-105. Por favor confirma tu asistencia.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 2 horas</div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem; margin-top: 0.8rem;">
+                                <button class="btn btn-sm" style="background-color: var(--color-primary); color: white;">Confirmar</button>
+                                <button class="btn btn-sm btn-outline" style="border-color: var(--color-danger); color: var(--color-danger);">Marcar como leída</button>
+                            </div>
+                        </div>
+
+                        <!-- Notificación sin leer -->
+                        <div style="padding: 1.5rem; border-left: 4px solid var(--color-warning); background-color: #fffbf0; margin-bottom: 1rem; border-radius: 4px; cursor: pointer;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <span class="badge badge-warning">Importante</span>
+                                        <strong>Registro de Calificaciones Próximo Vencimiento</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Recuerda que debes registrar las calificaciones del segundo parcial antes del 15 de diciembre.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 5 horas</div>
+                            </div>
+                        </div>
+
+                        <!-- Notificación sin leer -->
+                        <div style="padding: 1.5rem; border-left: 4px solid var(--color-info); background-color: #f0f8ff; margin-bottom: 1rem; border-radius: 4px; cursor: pointer;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <span class="badge badge-info">Información</span>
+                                        <strong>Nueva Asignatura Disponible</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Se ha abierto la asignación para la materia 'Física Cuántica Aplicada' para el próximo semestre.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 1 día</div>
+                            </div>
+                        </div>
+
+                        <!-- Notificación leída -->
+                        <div style="padding: 1.5rem; border-left: 4px solid #ddd; background-color: white; margin-bottom: 1rem; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <i class="fas fa-check" style="color: var(--color-success); font-size: 0.8rem;"></i>
+                                        <strong>Confir mación de Asistencia</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Tu asistencia a la reunión de departamento del 28 de noviembre ha sido confirmada.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 2 días</div>
+                            </div>
+                        </div>
+
+                        <!-- Notificación leída -->
+                        <div style="padding: 1.5rem; border-left: 4px solid #ddd; background-color: white; margin-bottom: 1rem; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <i class="fas fa-check" style="color: var(--color-success); font-size: 0.8rem;"></i>
+                                        <strong>Actualización de Aulas Disponibles</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Se han actualizado las aulas disponibles para el próximo semestre. Revisa las nuevas opciones.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 3 días</div>
+                            </div>
+                        </div>
+
+                        <!-- Notificación leída -->
+                        <div style="padding: 1.5rem; border-left: 4px solid #ddd; background-color: white; border-radius: 4px;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                                <div style="flex: 1;">
+                                    <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.3rem;">
+                                        <i class="fas fa-check" style="color: var(--color-success); font-size: 0.8rem;"></i>
+                                        <strong>Resumen de Actividad Semanal</strong>
+                                    </div>
+                                    <p style="margin: 0; color: #666; font-size: 0.9rem;">Tu resumen semanal está disponible. Tienes 45 estudiantes activos y 3 tareas pendientes de calificar.</p>
+                                </div>
+                                <div style="font-size: 0.75rem; color: #999;">Hace 4 días</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: center; gap: 1rem; margin-top: 2rem;">
+                    <button class="btn btn-outline">Cargar más</button>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

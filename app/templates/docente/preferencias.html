@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preferencias - Docente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar"></i> Calendario</a></li>
+            <li><a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book"></i> Asignaturas</a></li>
+            <li><a href="{{ url_for('docente_preferencias') }}" class="active"><i class="fas fa-cog"></i> Preferencias</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('docente_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('docente_notificaciones') }}"><i class="fas fa-bell icon"></i> Notificaciones {% if notificaciones_count > 0 %}<span class="badge badge-danger" style="margin-left: auto;">{{ notificaciones_count }}</span>{% endif %}</a>
+                    <a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book icon"></i> Asignaturas</a>
+                    <a href="{{ url_for('docente_preferencias') }}" class="active"><i class="fas fa-sliders-h icon"></i> Preferencias</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Preferencias</h1>
+                    <p style="opacity: 0.9;">Configura tus preferencias académicas y de horario</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Preferencias de Horario</h2>
+                        <p class="card-subtitle">Indica tus horarios preferidos para impartir clases</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_preferencias') }}">
+                        <div class="form-group">
+                            <label class="form-label">Horarios Preferidos</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="horario_1" name="horarios" value="matutino" checked>
+                                    <label for="horario_1" style="margin: 0; font-weight: 400;">Turno Matutino (08:00 - 12:00)</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="horario_2" name="horarios" value="vespertino" checked>
+                                    <label for="horario_2" style="margin: 0; font-weight: 400;">Turno Vespertino (14:00 - 18:00)</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="horario_3" name="horarios" value="nocturno">
+                                    <label for="horario_3" style="margin: 0; font-weight: 400;">Turno Nocturno (18:00 - 22:00)</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="horario_4" name="horarios" value="fin_semana">
+                                    <label for="horario_4" style="margin: 0; font-weight: 400;">Fin de Semana</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Días Preferidos</label>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_1" name="dias" value="lunes" checked>
+                                    <label for="dia_1" style="margin: 0; font-weight: 400;">Lunes</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_2" name="dias" value="martes" checked>
+                                    <label for="dia_2" style="margin: 0; font-weight: 400;">Martes</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_3" name="dias" value="miercoles" checked>
+                                    <label for="dia_3" style="margin: 0; font-weight: 400;">Miércoles</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_4" name="dias" value="jueves" checked>
+                                    <label for="dia_4" style="margin: 0; font-weight: 400;">Jueves</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_5" name="dias" value="viernes" checked>
+                                    <label for="dia_5" style="margin: 0; font-weight: 400;">Viernes</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="dia_6" name="dias" value="sabado">
+                                    <label for="dia_6" style="margin: 0; font-weight: 400;">Sábado</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Preferencias de Aulas</h2>
+                        <p class="card-subtitle">Indica tus preferencias respecto a ubicación de aulas</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_preferencias') }}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="tipo_aula" class="form-label">Tipo de Aula Preferida</label>
+                                <select id="tipo_aula" name="tipo_aula" class="form-control">
+                                    <option>Cualquiera</option>
+                                    <option>Aula Teórica</option>
+                                    <option>Aula Práctica</option>
+                                    <option>Laboratorio</option>
+                                    <option>Anfiteatro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="capacidad" class="form-label">Capacidad Preferida</label>
+                                <select id="capacidad" name="capacidad" class="form-control">
+                                    <option>Cualquiera</option>
+                                    <option>Pequeña (20-30)</option>
+                                    <option>Mediana (30-50)</option>
+                                    <option>Grande (50+)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="edificio" class="form-label">Edificios Preferidos</label>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="edif_1" name="edificios" value="A" checked>
+                                    <label for="edif_1" style="margin: 0; font-weight: 400;">Edificio A</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="edif_2" name="edificios" value="B">
+                                    <label for="edif_2" style="margin: 0; font-weight: 400;">Edificio B</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="edif_3" name="edificios" value="C">
+                                    <label for="edif_3" style="margin: 0; font-weight: 400;">Edificio C</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="edif_4" name="edificios" value="D">
+                                    <label for="edif_4" style="margin: 0; font-weight: 400;">Edificio D</label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Preferencias de Notificaciones</h2>
+                        <p class="card-subtitle">Configura cómo deseas recibir notificaciones</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_preferencias') }}">
+                        <div class="form-group">
+                            <label class="form-label">Notificaciones por Email</label>
+                            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="notif_1" name="notificaciones" value="cambios_horario" checked>
+                                    <label for="notif_1" style="margin: 0; font-weight: 400;">Cambios de horario</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="notif_2" name="notificaciones" value="asignaciones" checked>
+                                    <label for="notif_2" style="margin: 0; font-weight: 400;">Nuevas asignaciones</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="notif_3" name="notificaciones" value="comunicados" checked>
+                                    <label for="notif_3" style="margin: 0; font-weight: 400;">Comunicados administrativos</label>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <input type="checkbox" id="notif_4" name="notificaciones" value="reuniones">
+                                    <label for="notif_4" style="margin: 0; font-weight: 400;">Convocatoria de reuniones</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="frecuencia" class="form-label">Frecuencia de Resúmenes</label>
+                            <select id="frecuencia" name="frecuencia" class="form-control">
+                                <option>Instantáneo</option>
+                                <option selected>Diario</option>
+                                <option>Semanal</option>
+                                <option>Mensual</option>
+                                <option>Nunca</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Otras Preferencias</h2>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_preferencias') }}">
+                        <div class="form-group">
+                            <label for="idioma" class="form-label">Idioma de Interfaz</label>
+                            <select id="idioma" name="idioma" class="form-control">
+                                <option selected>Español</option>
+                                <option>English</option>
+                                <option>Português</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tema" class="form-label">Tema Visual</label>
+                            <select id="tema" name="tema" class="form-control">
+                                <option selected>Claro</option>
+                                <option>Oscuro</option>
+                                <option>Automático</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Mostrar Sugerencias</label>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                                <input type="checkbox" id="sugerencias" name="sugerencias" checked>
+                                <label for="sugerencias" style="margin: 0; font-weight: 400;">Mostrar sugerencias de mejora en la interfaz</label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="btn btn-primary" style="gap: 0.5rem;"><i class="fas fa-save"></i> Guardar Preferencias</button>
+                    <button class="btn btn-secondary" style="gap: 0.5rem;"><i class="fas fa-undo"></i> Restaurar Predeterminadas</button>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Ingreso Administrativo - Universidad{% endblock %}
+
+{% set hide_navbar = True %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-hero">
+        <div class="hero-content text-center">
+            <div class="mb-4">
+                <i class="fas fa-university" style="font-size: 4rem; color: var(--accent-color);"></i>
+            </div>
+            <h1 class="text-white mb-2" style="font-size: 3rem;">GESTIÓN</h1>
+            <p class="text-white mb-4" style="font-size: 1.25rem; opacity: 0.9;">Administración eficiente para una
+                educación de calidad.</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label text-white">Digitalizado</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label text-white">Soporte</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Seguro</div>
+                    <div class="stat-label text-white">Datos Encriptados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">Rápido</div>
+                    <div class="stat-label text-white">Optimizado</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="login-form-section">
+        <div class="login-header">
+            <div class="mb-2">
+                <span style="font-size: 2.5rem;">💼</span>
+            </div>
+            <h2 class="mb-1">Portal Administrativo</h2>
+            <p class="text-muted">Acceso exclusivo para personal autorizado</p>
+        </div>
+
+        <div class="role-switcher">
+            <a href="{{ url_for('index') }}" class="role-option">Inicio</a>
+            <a href="{{ url_for('login_docente') }}" class="role-option">Docente</a>
+            <a href="#" class="role-option active">Administrativo</a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('login') }}">
+            <div class="form-group">
+                <label class="form-label">Correo Institucional</label>
+                <div style="position: relative;">
+                    <input type="email" name="email" class="form-input" placeholder="admin@universidad.edu" required>
+                    <i class="fas fa-envelope"
+                        style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Contraseña</label>
+                <div style="position: relative;">
+                    <input type="password" name="password" class="form-input" placeholder="••••••••" required>
+                    <i class="fas fa-lock"
+                        style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted);"></i>
+                </div>
+            </div>
+
+            <div class="d-flex justify-between align-center mb-3">
+                <div class="checkbox-wrapper">
+                    <input type="checkbox" id="remember" name="remember">
+                    <label for="remember" class="text-muted" style="font-size: 0.9rem;">Recordarme</label>
+                </div>
+                <a href="#" class="text-secondary" style="font-size: 0.9rem; font-weight: 500;">¿Olvidaste tu
+                    contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block mb-3">
+                Ingresar al Sistema
+                <i class="fas fa-arrow-right"></i>
+            </button>
+
+            <div class="text-center">
+                <p class="text-muted" style="font-size: 0.9rem;">
+                    ¿Problemas de acceso? <a href="#" class="text-secondary font-medium">Contactar TI</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

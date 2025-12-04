@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignaciones Materia-Docente - Administrador</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user"></i> Docentes</a></li>
+            <li><a href="{{ url_for('admin_asignaciones') }}" class="active"><i class="fas fa-layer-group"></i> Asignaciones</a></li>
+            <li><a href="{{ url_for('admin_calendario') }}"><i class="fas fa-calendar"></i> Calendario</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('admin_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('admin_perfil') }}"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('admin_docentes') }}"><i class="fas fa-chalkboard-user icon"></i> Gestión Docentes</a>
+                    <a href="{{ url_for('admin_asignaciones') }}" class="active"><i class="fas fa-layer-group icon"></i> Asignaciones</a>
+                    <a href="{{ url_for('admin_calendario') }}"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Asignaciones Materia-Docente</h1>
+                    <p style="opacity: 0.9;">Gestiona la asignación de materias a los docentes</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-link"></i></div>
+                        <div class="stat-info">
+                            <h3>Asignaciones Activas</h3>
+                            <div class="stat-number">186</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>Confirmadas</h3>
+                            <div class="stat-number">175</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3>Pendientes</h3>
+                            <div class="stat-number">11</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple"><i class="fas fa-book"></i></div>
+                        <div class="stat-info">
+                            <h3>Materias Cubiertas</h3>
+                            <div class="stat-number">86</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h2 class="card-title">Registro de Asignaciones</h2>
+                            <p class="card-subtitle">Asignaciones de materias a docentes</p>
+                        </div>
+                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Nueva Asignación</button>
+                    </div>
+                    <div style="margin-bottom: 1rem; display: flex; gap: 0.5rem;">
+                        <input type="text" class="form-control" placeholder="Buscar por docente o materia..." style="flex: 1;">
+                        <select class="form-control" style="max-width: 150px;">
+                            <option>Todos los estados</option>
+                            <option>Confirmada</option>
+                            <option>Pendiente</option>
+                            <option>Cancelada</option>
+                        </select>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Docente</th>
+                                    <th>Materia</th>
+                                    <th>Créditos</th>
+                                    <th>Horas/Semana</th>
+                                    <th>Semestre</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Dr. Carlos Mendez</strong></td>
+                                    <td>Cálculo I</td>
+                                    <td>6</td>
+                                    <td>4</td>
+                                    <td>2024-II</td>
+                                    <td><span class="badge badge-success">Confirmada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm" style="background-color: var(--color-primary); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm" style="background-color: var(--color-danger); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dr. Carlos Mendez</strong></td>
+                                    <td>Cálculo II</td>
+                                    <td>6</td>
+                                    <td>4</td>
+                                    <td>2024-II</td>
+                                    <td><span class="badge badge-success">Confirmada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm" style="background-color: var(--color-primary); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm" style="background-color: var(--color-danger); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ing. Maria Lopez</strong></td>
+                                    <td>Álgebra Lineal</td>
+                                    <td>6</td>
+                                    <td>4</td>
+                                    <td>2024-II</td>
+                                    <td><span class="badge badge-success">Confirmada</span></td>
+                                    <td>
+                                        <button class="btn btn-sm" style="background-color: var(--color-primary); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm" style="background-color: var(--color-danger); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Lic. Juan Rodriguez</strong></td>
+                                    <td>Literatura Moderna</td>
+                                    <td>4</td>
+                                    <td>2</td>
+                                    <td>2024-II</td>
+                                    <td><span class="badge badge-warning">Pendiente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm" style="background-color: var(--color-primary); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-sm" style="background-color: var(--color-danger); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Prof. Roberto García</strong></td>
+                                    <td>Ingeniería de Software</td>
+                                    <td>5</td>
+                                    <td>3</td>
+                                    <td>2024-II</td>
+                                    <td><span class="badge badge-warning">Pendiente</span></td>
+                                    <td>
+                                        <button class="btn btn-sm" style="background-color: var(--color-primary); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-check"></i></button>
+                                        <button class="btn btn-sm" style="background-color: var(--color-danger); color: white; padding: 0.3rem 0.6rem;"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Materias sin Asignar</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Materia</th>
+                                        <th>Créditos</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Física Cuántica</strong></td>
+                                        <td>6</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Economía Aplicada</strong></td>
+                                        <td>4</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Docentes sin Asignación</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Docente</th>
+                                        <th>Departamento</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Dra. Sofia Ramos</strong></td>
+                                        <td>Ingeniería</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Prof. Luis Torres</strong></td>
+                                        <td>Ciencias</td>
+                                        <td><button class="btn btn-sm btn-primary">Asignar</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Docente</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div style="font-size: 2rem;">📚</div>
+                <span class="logo-text">UNIVERSIDAD</span>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <div class="notification-icon">
+                    <i class="fas fa-bell" style="font-size: 1.5rem; color: #666;"></i>
+                    {% if notificaciones_count > 0 %}<span class="notification-badge">{{ notificaciones_count }}</span>{% endif %}
+                </div>
+                <div class="user-profile">
+                    <div class="user-avatar">{{ usuario.nombre_completo[0] }}</div>
+                    <div class="user-info">
+                        <div class="user-name">{{ usuario.nombre_completo.split()[1] }}</div>
+                        <div class="user-role">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home"></i> Inicio</a></li>
+            <li><a href="{{ url_for('docente_perfil') }}" class="active"><i class="fas fa-user"></i> Perfil</a></li>
+            <li><a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar"></i> Calendario</a></li>
+            <li><a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book"></i> Asignaturas</a></li>
+            <li><a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-cog"></i> Preferencias</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="main-layout">
+            <aside class="sidebar">
+                <div class="sidebar-menu">
+                    <a href="{{ url_for('docente_dashboard') }}"><i class="fas fa-home icon"></i> Inicio</a>
+                    <a href="{{ url_for('docente_perfil') }}" class="active"><i class="fas fa-user icon"></i> Perfil</a>
+                    <a href="{{ url_for('docente_notificaciones') }}"><i class="fas fa-bell icon"></i> Notificaciones {% if notificaciones_count > 0 %}<span class="badge badge-danger" style="margin-left: auto;">{{ notificaciones_count }}</span>{% endif %}</a>
+                    <a href="{{ url_for('docente_calendario') }}"><i class="fas fa-calendar icon"></i> Calendario</a>
+                    <a href="{{ url_for('docente_asignaturas') }}"><i class="fas fa-book icon"></i> Asignaturas</a>
+                    <a href="{{ url_for('docente_preferencias') }}"><i class="fas fa-sliders-h icon"></i> Preferencias</a>
+                    <a href="{{ url_for('logout') }}" style="color: var(--color-danger);"><i class="fas fa-sign-out-alt icon"></i> Cerrar Sesión</a>
+                </div>
+            </aside>
+
+            <main class="main-content">
+                <div class="card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 2rem;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Mi Perfil</h1>
+                    <p style="opacity: 0.9;">Edita tu información personal y profesional</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="alert alert-{{ category }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Información Personal</h2>
+                        <p class="card-subtitle">Datos generales del docente</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_perfil') }}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem;">
+                            <div class="form-group">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" id="nombre" class="form-control" value="{{ usuario.nombre_completo.split()[0] }}" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" id="apellido" class="form-control" value="{{ usuario.nombre_completo.split()[1:] | join(' ') }}" readonly>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" value="{{ usuario.email if usuario.email else '' }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefono" class="form-label">Teléfono</label>
+                                <input type="tel" id="telefono" name="telefono" class="form-control" placeholder="+34 600 000 000">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Información Profesional</h2>
+                        <p class="card-subtitle">Datos académicos y departamento</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_perfil') }}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="departamento" class="form-label">Departamento</label>
+                                <input type="text" id="departamento" class="form-control" value="Ciencias Exactas" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label for="categoria" class="form-label">Categoría</label>
+                                <select id="categoria" name="categoria" class="form-control">
+                                    <option>Profesor Titular</option>
+                                    <option>Profesor Asociado</option>
+                                    <option>Profesor Ayudante</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="despacho" class="form-label">Despacho</label>
+                                <input type="text" id="despacho" name="despacho" class="form-control" placeholder="Edificio A, Planta 2, Aula 201">
+                            </div>
+                            <div class="form-group">
+                                <label for="especialidad" class="form-label">Especialidad</label>
+                                <input type="text" id="especialidad" name="especialidad" class="form-control" placeholder="Análisis Matemático">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Horario de Atención</h2>
+                        <p class="card-subtitle">Horarios disponibles para atender estudiantes</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_perfil') }}">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="horario_inicio" class="form-label">Lunes a Viernes</label>
+                                <div style="display: flex; gap: 1rem;">
+                                    <input type="time" id="horario_inicio" name="horario_inicio" class="form-control" value="09:00">
+                                    <span style="display: flex; align-items: center;"> a </span>
+                                    <input type="time" name="horario_fin" class="form-control" value="12:00">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lugar_atencion" class="form-label">Lugar de Atención</label>
+                                <input type="text" id="lugar_atencion" name="lugar_atencion" class="form-control" placeholder="Despacho / Sala de profesores">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Seguridad</h2>
+                        <p class="card-subtitle">Gestión de contraseña</p>
+                    </div>
+                    <form method="POST" action="{{ url_for('docente_perfil') }}">
+                        <div class="form-group">
+                            <label for="contrasena_actual" class="form-label">Contraseña Actual</label>
+                            <input type="password" id="contrasena_actual" name="contrasena_actual" class="form-control">
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                <label for="contrasena_nueva" class="form-label">Nueva Contraseña</label>
+                                <input type="password" id="contrasena_nueva" name="contrasena_nueva" class="form-control">
+                            </div>
+                            <div class="form-group">
+                                <label for="contrasena_confirmar" class="form-label">Confirmar Nueva Contraseña</label>
+                                <input type="password" id="contrasena_confirmar" name="contrasena_confirmar" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="btn btn-primary" style="gap: 0.5rem;"><i class="fas fa-save"></i> Guardar Cambios</button>
+                    <button class="btn btn-secondary" style="gap: 0.5rem;"><i class="fas fa-undo"></i> Descartar</button>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+</html>
